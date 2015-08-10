@@ -1,6 +1,7 @@
 class Caesar
 
   def initialize
+    ## Think about error handling for bad arguments
     @text_in = open(ARGV[0])
     if ARGV[1] == 'decrypt'
       puts "Enter decryption key or type 'brute' to employ brutus force"
@@ -25,8 +26,12 @@ class Caesar
     # Shift
     @text_in.each_char do |b|   
       if letters.include?(b)
+        ## This is inefficient, as you have to traverse the list once for include?
+        ## and then again for index().
+        ## Can you resuse information? Can you avoid traversing a list at all?
         output << letters[ wrap( letters.index(b) + shift ) ]
       elsif caps.include?(b)
+        ## See above ^^
         output << caps[ wrap( caps.index(b) + shift ) ]
       else 
         output << b
@@ -34,10 +39,12 @@ class Caesar
     end
     # Visual Output
     puts ' '
-    puts '=' * 69
-    puts '100% ULTRA TOP SECERET CODED MESSAGE #2015 #EXTRAVAGANZA'    
+    puts '=' * 69 ## :-O
+    puts '100% ULTRA TOP SECERET CODED MESSAGE #2015 #EXTRAVAGANZA #YOLO #BERNIE16'    
     puts '=' * 69
     puts output.join + "[ #{shift} ]"
+    ## Might as well add an optional argument for output filename?
+    ## Instead of computing the same string twice on subsequent lines, put the filename in a variable anyway.
     File.open("#{ARGV[0]}-output.txt", "w") {|f| f.write(output.join)}
     puts "written to #{ARGV[0]}-output.txt"
   end 
@@ -50,6 +57,7 @@ class Caesar
       cyghfer(1)
       puts "Are we there yet? [y/n] \n"
       answer = $stdin.gets.chomp.to_s
+      ## What happens with bad input?
       if answer == 'y'
         puts "\nEXCELSIOR!!!!\n"
         isdone = true
@@ -69,8 +77,10 @@ class Caesar
   def wrap(x)  
     range = 26
     if (x < 0)
-      x += range * ((0 - x) / range + 1)    
+       ## Order of operations is not immediately clear -- is it (-x/range) + 1 OR -x/(range + 1)?
+      x += range * ((0 - x) / range + 1)
     end
+    ## Explain in the comment why you have to have the block above before this line?
     x = (x % range)
   end
 end
